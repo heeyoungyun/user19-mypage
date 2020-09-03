@@ -88,4 +88,23 @@ public class MyPageViewHandler {
             e.printStackTrace();
         }
     }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenAlarmRegistered_then_CREATE_1 (@Payload AlarmRegistered alarmRegistered) {
+        try {
+            if (alarmRegistered.isMe()) {
+                // view 객체 생성
+                MyPage myPage = new MyPage();
+                // view 객체에 이벤트의 Value 를 set 함
+                myPage.setScreeningId(alarmRegistered.getId());
+                myPage.setCustNm(String.valueOf(alarmRegistered.getId()));
+                myPage.setHospitalNm(alarmRegistered.getReceiver());
+                myPage.setStatus(alarmRegistered.getMessage());
+                // view 레파지 토리에 save
+                myPageRepository.save(myPage);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
